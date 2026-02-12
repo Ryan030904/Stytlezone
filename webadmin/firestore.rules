@@ -1,0 +1,121 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Hàm kiểm tra đăng nhập
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // ── Hàm kiểm tra admin (email nằm trong danh sách)
+    function isAdmin() {
+      return isAuth() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // ══════════════════════════════════════
+    // MẶC ĐỊNH: CHẶN TẤT CẢ
+    // ══════════════════════════════════════
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ══════════════════════════════════════
+    // ADMIN — danh sách quản trị viên
+    // ══════════════════════════════════════
+    match /admins/{uid} {
+      allow read: if isAuth() && request.auth.uid == uid;
+      // Chỉ admin hiện tại mới có thể đọc chính mình
+      // Tạo/sửa/xóa admin cần thực hiện qua Firebase Console
+    }
+
+    // ══════════════════════════════════════
+    // PRODUCTS, CATEGORIES
+    // ══════════════════════════════════════
+    match /products/{docId} {
+      allow read: if true;                    // Khách hàng cần xem sản phẩm
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /categories/{docId} {
+      allow read: if true;                    // Khách hàng cần xem danh mục
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════
+    // ORDERS
+    // ══════════════════════════════════════
+    match /orders/{docId} {
+      allow read: if isAuth();
+      allow create: if isAuth();              // Khách hoặc admin tạo đơn
+      allow update, delete: if isAdmin();     // Chỉ admin sửa/xóa
+    }
+
+    // ══════════════════════════════════════
+    // PAYMENTS
+    // ══════════════════════════════════════
+    match /payments/{docId} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════
+    // SHIPMENTS
+    // ══════════════════════════════════════
+    match /shipments/{docId} {
+      allow read: if isAuth();                // Khách theo dõi vận đơn
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════
+    // CUSTOMERS
+    // ══════════════════════════════════════
+    match /customers/{docId} {
+      allow read: if isAdmin();
+      allow create: if isAuth();              // Tự tạo khi đăng ký
+      allow update, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════
+    // PROMOTIONS, BANNERS (CMS)
+    // ══════════════════════════════════════
+    match /promotions/{docId} {
+      allow read: if true;                    // Khách xem khuyến mãi
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /banners/{docId} {
+      allow read: if true;                    // Frontend hiển thị banner
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════
+    // WAREHOUSE RECEIPTS, RMAs
+    // ══════════════════════════════════════
+    match /warehouse_receipts/{docId} {
+      allow read, write: if isAdmin();
+    }
+
+    match /rmas/{docId} {
+      allow read: if isAuth();
+      allow create: if isAuth();
+      allow update, delete: if isAdmin();
+    }
+
+    // ══════════════════════════════════════
+    // AUDIT LOGS — chỉ ghi, không sửa/xóa
+    // ══════════════════════════════════════
+    match /audit_logs/{docId} {
+      allow read: if isAdmin();
+      allow create: if isAuth();              // Service ghi log
+      allow update, delete: if false;         // Không ai được sửa/xóa log
+    }
+
+    // ══════════════════════════════════════
+    // SETTINGS — chỉ admin
+    // ══════════════════════════════════════
+    match /settings/{docId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

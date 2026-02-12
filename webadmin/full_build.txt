@@ -1,0 +1,69 @@
+﻿Compiling lib\main.dart for the Web...                          
+flutter : Wasm dry run succeeded. Consider building and testing your application with the `--wasm` flag. See docs for 
+more info: https://docs.flutter.dev/platform-integration/web/wasm
+At line:1 char:38
++ ... ce = 'Continue'; flutter build web --no-tree-shake-icons *>&1 | Out-S ...
++                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Wasm dry run su...ration/web/wasm:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Use --no-wasm-dry-run to disable these warnings.
+Could not write file to D:\Ä‘á»“ Ă¡n 2\webadmin\build\web\assets\shaders/stretch_effect.frag
+
+Could not write file to D:\Ä‘á»“ Ă¡n 2\webadmin\build\web\assets\shaders/ink_sparkle.frag
+
+Target web_release_bundle failed: ShaderCompilerException: Shader compilation of 
+"C:\flutter\packages\flutter\lib\src\material\shaders\stretch_effect.frag" to "D:\Ä‘á»“ Ă¡n 
+2\webadmin\build\web\assets\shaders/stretch_effect.frag" failed with exit code 1.
+impellerc stdout:
+
+impellerc stderr:
+Could not write file to D:\Ä‘á»“ Ă¡n 2\webadmin\build\web\assets\shaders/stretch_effect.frag
+
+
+
+#0      ShaderCompiler.compileShader (package:flutter_tools/src/build_system/tools/shader_compiler.dart:196:9)
+<asynchronous suspension>
+#1      copyAssets.<anonymous closure> (package:flutter_tools/src/build_system/targets/assets.dart:157:25)
+<asynchronous suspension>
+#2      Future.wait.<anonymous closure> (dart:async/future.dart:546:21)
+<asynchronous suspension>
+#3      copyAssets (package:flutter_tools/src/build_system/targets/assets.dart:111:3)
+<asynchronous suspension>
+#4      WebReleaseBundle.build (package:flutter_tools/src/build_system/targets/web.dart:528:29)
+<asynchronous suspension>
+#5      _BuildInstance._invokeInternal (package:flutter_tools/src/build_system/build_system.dart:895:9)
+<asynchronous suspension>
+#6      Future.wait.<anonymous closure> (dart:async/future.dart:546:21)
+<asynchronous suspension>
+#7      _BuildInstance.invokeTarget (package:flutter_tools/src/build_system/build_system.dart:833:32)
+<asynchronous suspension>
+#8      FlutterBuildSystem.build (package:flutter_tools/src/build_system/build_system.dart:653:16)
+<asynchronous suspension>
+#9      WebBuilder.buildWeb (package:flutter_tools/src/web/compile.dart:94:34)
+<asynchronous suspension>
+#10     BuildWebCommand.runCommand (package:flutter_tools/src/commands/build_web.dart:296:5)
+<asynchronous suspension>
+#11     FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1559:27)
+<asynchronous suspension>
+#12     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#13     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#14     FlutterCommandRunner.runCommand.<anonymous closure> 
+(package:flutter_tools/src/runner/flutter_command_runner.dart:487:9)
+<asynchronous suspension>
+#15     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#16     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:422:5)
+<asynchronous suspension>
+#17     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:104:11)
+<asynchronous suspension>
+#18     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#19     main (package:flutter_tools/executable.dart:103:3)
+<asynchronous suspension>
+
+Compiling lib\main.dart for the Web...                             65,4s
+Error: Failed to compile application for the Web.
+
