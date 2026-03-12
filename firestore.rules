@@ -1,0 +1,133 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ════════════════════════════════════════════════
+    // HELPER
+    // ════════════════════════════════════════════════
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ════════════════════════════════════════════════
+    // ADMINS
+    // ════════════════════════════════════════════════
+    match /admins/{uid} {
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // ════════════════════════════════════════════════
+    // PUBLIC DATA — ai cũng đọc, chỉ admin sửa
+    // ════════════════════════════════════════════════
+    match /products/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /categories/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /banners/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /promotions/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ════════════════════════════════════════════════
+    // ORDERS — khách tạo đơn, admin quản lý
+    // ════════════════════════════════════════════════
+    match /orders/{orderId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn();
+    }
+
+    // ════════════════════════════════════════════════
+    // CUSTOMERS — khách tự tạo, admin xem/xóa
+    // ════════════════════════════════════════════════
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(customerId);
+      allow update: if isOwner(customerId);
+      allow delete: if isSignedIn();
+    }
+
+    // ════════════════════════════════════════════════
+    // ADMIN-ONLY DATA — đăng nhập là đọc được, ghi cần admin
+    // ════════════════════════════════════════════════
+    match /payments/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    match /rmas/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn();
+    }
+
+    match /shipments/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    match /warehouse_receipts/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    match /audit_logs/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    match /notifications/{docId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if isSignedIn();
+    }
+
+    // ════════════════════════════════════════
+    // REVIEWS — Anti-spam:
+    //   Doc ID = {userId}_{productId} → 1 review / product / user
+    //   customerId must match auth UID on create
+    //   Admin can update/delete (hide, reply, soft-delete)
+    // ════════════════════════════════════════
+    match /reviews/{docId} {
+      allow read: if true;
+
+      // User can only create their own review, doc ID must be uid_productId
+      allow create: if isSignedIn()
+        && request.resource.data.customerId == request.auth.uid
+        && docId.matches(request.auth.uid + '_.*');
+
+      // Admin can update (hide, reply, etc.)
+      allow update: if isSignedIn();
+      allow delete: if isSignedIn();
+    }
+  }
+}
