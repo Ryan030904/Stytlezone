@@ -1,0 +1,40 @@
+/* ─── Sale Page Styles ─── */
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 0 0 rgba(255, 65, 108, 0.4); }
+    70% { box-shadow: 0 0 0 8px rgba(255, 65, 108, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 65, 108, 0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.sale-spinner {
+    animation: spin 0.8s linear infinite;
+}
+
+/* Product card hover effects */
+.sale-card:hover .sale-img-main { transform: scale(1.05); }
+.sale-card:hover .sale-img-hover { opacity: 1; }
+.sale-card:hover .sale-card-title { color: var(--color-accent); }
+.sale-card:hover .sale-quick-sizes { opacity: 1; }
+
+/* Responsive */
+@media (max-width: 900px) {
+    .sale-grid,
+    .sale-flash-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 24px 12px !important;
+    }
+    .sale-voucher-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 500px) {
+    .sale-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px 10px !important;
+    }
+}

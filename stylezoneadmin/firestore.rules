@@ -1,0 +1,10 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ⚠️ DEV MODE — cho phép tất cả read/write, KHÔNG dùng production!
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
